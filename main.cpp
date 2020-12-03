@@ -4,37 +4,31 @@
 #include <string>
 using namespace std;
 
-struct Node{
-    int id;
-    int color;
-    vector<int> neighbours;
-    Node(){}
-    Node(int id, int color): id(id), color(color){}
-};
-
 class Graph{
 public:
-    vector<Node*> nodes;
+    vector<int> nodeColor; // -1 means this node is already contracted with others
+    vector<vector<int>> neighbours; // adjacency list
+    int n; // number of nodes, won't change after creation
     int cost;
     vector<pair<int, int>> path;
-    Graph(): cost(0){}
-    Graph(int n){
-        nodes = vector<Node*>(n, NULL);
-        cost = 0;
+    Graph(): n(0), cost(0){}
+    Graph(int n): n(n), cost(0){
+        nodeColor = vector<int>(n, -1);
+        neighbours = vector<vector<int>>(n);
     }
 
     void printGraph(){
         cout << "Graph:" << endl;
-        cout << "Number of nodes: " << nodes.size() << endl;
+        cout << "Number of nodes: " << n << endl;
         cout << "Color of each node: ";
-        for(int i = 0; i < nodes.size(); i++){
-            cout << "node " << i << ": " << nodes[i]->color << "; ";
+        for(int i = 0; i < n; i++){
+            cout << "node " << i << ": " << nodeColor[i] << "; ";
         }
         cout << endl;
         cout << "Neighbour of each node: ";
-        for(int i = 0; i < nodes.size(); i++){
+        for(int i = 0; i < n; i++){
             cout << "node " << i << ": " << "[";
-            for(int j : nodes[i]->neighbours){
+            for(int j : neighbours[i]){
                 cout << j << " ";
             }
             cout << "]; ";
@@ -69,14 +63,13 @@ void readTestCaseFromFile(const string& fileName, Graph& graph, int& n, int& ste
     graph = Graph(n);
     for(int i = 0; i < n; i++){
         getline(file, str);
-        int color = stoi(str);
-        graph.nodes[i] = new Node(i, color);
+        graph.nodeColor[i] = stoi(str);
     }
     for(int i = 0; i < n; i++){
         getline(file, str);
         vector<string> splits = splitStr(str, ' ');
         for(const string& idStr : splits){
-            graph.nodes[i]->neighbours.push_back(stoi(idStr));
+            graph.neighbours[i].push_back(stoi(idStr));
         }
     }
 }

@@ -3,26 +3,84 @@
 #include <fstream>
 #include <string>
 #include <unordered_set>
+#include <queue>
 using namespace std;
+
+vector<string> splitStr(const string& str, char c){
+    int prev = 0;
+    vector<string> res;
+    for(int i = 0; i <= str.size(); i++){
+        if(i == str.size() || str[i] == c){
+            res.push_back(str.substr(prev, i - prev));
+            prev = i + 1;
+        }
+    }
+    return res;
+}
 
 class Graph{
 public:
-    vector<int> nodeColor; // -1 means this node is already contracted with others
-    vector<unordered_set<int>> neighbours; // adjacency list
-    int n; // total number of nodes, won't change after creation
-    int curNodeCnt; // current number of nodes
-    int cost;
-    vector<pair<int, int>> path;
-    Graph(): n(0), curNodeCnt(0), cost(0){}
-    Graph(int n): n(n), curNodeCnt(n), cost(0){
+
+    Graph(): n(0), curNodeCnt(0), cost(0), curColorCnt(0){}
+
+    Graph(int n): n(n), curNodeCnt(n), cost(0), curColorCnt(0){
         nodeColor = vector<int>(n, -1);
         neighbours = vector<unordered_set<int>>(n);
     }
 
-    void printGraph(){
+    Graph(const string& fileName): cost(0){
+        ifstream file(fileName);
+        string str;
+        getline(file, str);
+        n = curNodeCnt = stoi(str);
+        nodeColor = vector<int>(n, -1);
+        neighbours = vector<unordered_set<int>>(n);
+        getline(file, str);
+        // stepCnt = stoi(str);
+        getline(file, str);
+        // colorCnt = stoi(str);
+        for(int i = 0; i < n; i++){
+            getline(file, str);
+            nodeColor[i] = stoi(str);
+        }
+        for(int i = 0; i < n; i++){
+            getline(file, str);
+            vector<string> splits = splitStr(str, ' ');
+            for(const string& idStr : splits){
+                neighbours[i].insert(stoi(idStr));
+            }
+        }
+        updateColorNum();
+    }
+
+    // getters
+    int getN() const{
+        return n;
+    }
+    int getCurNodeCnt()const{
+        return curNodeCnt;
+    }
+    int getCost() const{
+        return cost;
+    }
+    int getCurColorCnt() const{
+        return curColorCnt;
+    }
+    int getNodeColor(int id) const{
+        if(id < 0 || id >= n){
+            return -1;
+        }
+        return nodeColor[id];
+    }
+    vector<pair<int,int>> getPath(){
+        return path;
+    }
+
+    void printGraph() const{
         // cout << "Graph:" << endl;
         // cout << "Total number of nodes: " << n << endl;
         cout << "Current number of nodes: " << curNodeCnt << endl;
+        cout << "Current number of colors: " << curColorCnt << endl;
         cout << "Color of each node: ";
         for(int i = 0; i < n; i++){
             if(nodeColor[i] != -1){
@@ -59,10 +117,9 @@ public:
         }
         unordered_set<int> res;
         for(int j : neighbours[nodeId]){
-            if(nodeColor[j] != -1){
-                res.insert(nodeColor[j]);
-            }
+            res.insert(nodeColor[j]);
         }
+        res.erase(-1);
         return vector<int>(res.begin(), res.end());
     }
 
@@ -78,8 +135,42 @@ public:
         cost++;
         path.emplace_back(nodeId, newColor);
         contract(nodeId);
+        updateColorNum();
     }
+
+    /*
+        Generate all possible next graphs
+    */
+    vector<Graph> getNextGraphs(){
+        vector<Graph> ans;
+        for(int i = 0; i < n; i++){
+            if(nodeColor[i] == -1){
+                continue;
+            }
+            vector<int> colors = getNeighbourColors(i);
+            for(int c : colors){
+                Graph graph(*this); // copy current graph
+                graph.changeNodeColor(i, c);
+                ans.push_back(graph);
+            }
+        }
+        return ans;
+    }
+
 private:
+    int n; // total number of nodes, won't change after creation
+    int curNodeCnt; // current number of nodes
+    int cost;
+    int curColorCnt; // remaining colors
+    vector<int> nodeColor; // -1 means this node is already contracted with others
+    vector<unordered_set<int>> neighbours; // adjacency list
+    vector<pair<int, int>> path;
+
+    void updateColorNum(){
+        unordered_set<int> seen(nodeColor.begin(), nodeColor.end());
+        seen.erase(-1);
+        curColorCnt = seen.size();
+    }
     /*
         Contract this node with its neighbours with the same color
         The id of the merged node is the min id of these merged nodes
@@ -130,17 +221,7 @@ private:
 
 };
 
-vector<string> splitStr(const string& str, char c){
-    int prev = 0;
-    vector<string> res;
-    for(int i = 0; i <= str.size(); i++){
-        if(i == str.size() || str[i] == c){
-            res.push_back(str.substr(prev, i - prev));
-            prev = i + 1;
-        }
-    }
-    return res;
-}
+
 
 void readTestCaseFromFile(const string& fileName, Graph& graph, int& n, int& stepCnt, int& colorCnt){
     ifstream file(fileName);
@@ -151,18 +232,7 @@ void readTestCaseFromFile(const string& fileName, Graph& graph, int& n, int& ste
     stepCnt = stoi(str);
     getline(file, str);
     colorCnt = stoi(str);
-    graph = Graph(n);
-    for(int i = 0; i < n; i++){
-        getline(file, str);
-        graph.nodeColor[i] = stoi(str);
-    }
-    for(int i = 0; i < n; i++){
-        getline(file, str);
-        vector<string> splits = splitStr(str, ' ');
-        for(const string& idStr : splits){
-            graph.neighbours[i].insert(stoi(idStr));
-        }
-    }
+    graph = Graph(fileName);
 }
 
 /*
@@ -180,14 +250,41 @@ void manualVerify(Graph graph, const vector<pair<int, int>>& moves){
     }
 }
 
-vector<pair<int, int>> solve(Graph* graph, int limit){
+/*
+    Input a graph, print all possible next graphs
+*/
+void testGetNextGraphs(Graph graph){
+    cout << "Original Graph:" << endl;
+    graph.printGraph();
+    cout << endl;
+    vector<Graph> graphs = graph.getNextGraphs();
+    cout << "Next graphs cnt = " << graphs.size() << endl;
+    for(const Graph& g : graphs){
+        g.printGraph();
+        cout << endl;
+    }
+}
+
+vector<pair<int, int>> solve(Graph graph, int limit){
+    auto comp = [](const Graph& g1, const Graph& g2){return g1.getCurColorCnt() + g1.getCost() > g2.getCurColorCnt() + g2.getCost();};
+    priority_queue<Graph, vector<Graph>, decltype(comp)> pq(comp);
+    // unordered_set<Graph> seen; // TODO, need to override hash and == comparator
+    pq.push(graph);
+    // seen.insert(graph);
+    while(!pq.empty()){
+        Graph curG = pq.top();
+        pq.pop();
+        
+    }
     return vector<pair<int, int>>();
 }
+
 int main(){
     cout << "Hello CSE 202" << endl;
     Graph graph;
     int n, stepCnt, colorCnt;
     readTestCaseFromFile("./data/sample1.txt", graph, n, stepCnt, colorCnt);
     vector<pair<int, int>> moves = {{4, 0}, {0, 1}, {0, 2}};
-    manualVerify(graph, moves);
+    // manualVerify(graph, moves);
+    testGetNextGraphs(graph);
 }

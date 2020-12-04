@@ -165,6 +165,20 @@ void readTestCaseFromFile(const string& fileName, Graph& graph, int& n, int& ste
     }
 }
 
+/*
+    If you know the solution, you can use this function to print the graph of each step
+*/
+void manualVerify(Graph graph, const vector<pair<int, int>>& moves){
+    cout << "Original Graph:" << endl;
+    graph.printGraph();
+    cout << endl;
+    for(int i = 0; i < moves.size(); i++){
+        cout << "Move " << i + 1 << ": " << endl;
+        graph.changeNodeColor(moves[i].first, moves[i].second);
+        graph.printGraph();
+        cout << endl;
+    }
+}
 
 vector<pair<int, int>> solve(Graph* graph, int limit){
     return vector<pair<int, int>>();
@@ -174,18 +188,6 @@ int main(){
     Graph graph;
     int n, stepCnt, colorCnt;
     readTestCaseFromFile("./data/sample1.txt", graph, n, stepCnt, colorCnt);
-    cout << "Original Graph:" << endl;
-    graph.printGraph();
-    cout << endl << "First Move:" << endl;
-    graph.changeNodeColor(4, 0);
-    graph.printGraph();
-
-    cout << endl << "Second Move:" << endl;
-    graph.changeNodeColor(0, 1);
-    graph.printGraph();
-
-    cout << endl << "Third Move:" << endl;
-    graph.changeNodeColor(0, 2);
-    graph.printGraph();
-    cout << endl;
+    vector<pair<int, int>> moves = {{4, 0}, {0, 1}, {0, 2}};
+    manualVerify(graph, moves);
 }

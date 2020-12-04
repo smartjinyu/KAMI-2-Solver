@@ -2,31 +2,39 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <unordered_set>
 using namespace std;
 
 class Graph{
 public:
     vector<int> nodeColor; // -1 means this node is already contracted with others
-    vector<vector<int>> neighbours; // adjacency list
-    int n; // number of nodes, won't change after creation
+    vector<unordered_set<int>> neighbours; // adjacency list
+    int n; // total number of nodes, won't change after creation
+    int curNodeCnt; // current number of nodes
     int cost;
     vector<pair<int, int>> path;
-    Graph(): n(0), cost(0){}
-    Graph(int n): n(n), cost(0){
+    Graph(): n(0), curNodeCnt(0), cost(0){}
+    Graph(int n): n(n), curNodeCnt(n), cost(0){
         nodeColor = vector<int>(n, -1);
-        neighbours = vector<vector<int>>(n);
+        neighbours = vector<unordered_set<int>>(n);
     }
 
     void printGraph(){
-        cout << "Graph:" << endl;
-        cout << "Number of nodes: " << n << endl;
+        // cout << "Graph:" << endl;
+        // cout << "Total number of nodes: " << n << endl;
+        cout << "Current number of nodes: " << curNodeCnt << endl;
         cout << "Color of each node: ";
         for(int i = 0; i < n; i++){
-            cout << "node " << i << ": " << nodeColor[i] << "; ";
+            if(nodeColor[i] != -1){
+                cout << "node " << i << ": " << nodeColor[i] << "; ";
+            }
         }
         cout << endl;
         cout << "Neighbour of each node: ";
         for(int i = 0; i < n; i++){
+            if(nodeColor[i] == -1){
+                continue;
+            }
             cout << "node " << i << ": " << "[";
             for(int j : neighbours[i]){
                 cout << j << " ";
@@ -35,8 +43,91 @@ public:
         }
         cout << endl;
         cout << "Cost: " << cost << endl;
-        // path
+        cout << "Path: ";
+        for(int i = 0; i < path.size(); i++){
+            cout << "(" << path[i].first << ", " << path[i].second << "); ";
+        }
+        cout << endl;
     }
+
+    /*
+        Get color of the neighbours of the given node
+    */
+    vector<int> getNeighbourColors(int nodeId){
+        if(nodeId < 0 || nodeId >= n || nodeColor[nodeId] == -1){
+            return vector<int>();
+        }
+        unordered_set<int> res;
+        for(int j : neighbours[nodeId]){
+            if(nodeColor[j] != -1){
+                res.insert(nodeColor[j]);
+            }
+        }
+        return vector<int>(res.begin(), res.end());
+    }
+
+    /*
+        Change the node color of the given nodeId to newColor
+        Perform edge contraction and node merge if necessary
+    */
+    void changeNodeColor(int nodeId, int newColor){
+        if(nodeId < 0 || nodeId >= n || nodeColor[nodeId] == -1){
+            return;
+        }
+        nodeColor[nodeId] = newColor;
+        cost++;
+        path.emplace_back(nodeId, newColor);
+        contract(nodeId);
+    }
+private:
+    /*
+        Contract this node with its neighbours with the same color
+        The id of the merged node is the min id of these merged nodes
+    */
+    void contract(int nodeId){
+        if(nodeId < 0 || nodeId >= n || nodeColor[nodeId] == -1){
+            return;
+        }
+        unordered_set<int> nodeToMerge;
+        int newNodeId = nodeId; // node id of the merged node
+        for(int j : neighbours[nodeId]){
+            if(nodeColor[nodeId] == nodeColor[j]){
+                nodeToMerge.insert(j);
+                newNodeId = min(newNodeId, j);
+            }
+        }
+        if(nodeToMerge.empty()){
+            // no need to merge
+            return;
+        }
+        nodeToMerge.insert(nodeId);
+        nodeToMerge.erase(newNodeId);
+        neighbours[newNodeId].clear();
+        for(int j : nodeToMerge){
+            nodeColor[j] = -1; // remove node from the graph
+        }
+        curNodeCnt -= nodeToMerge.size();
+        // therotically better way is to only consider the neighbours of {nodeToMerge + newNodeId}
+        for(int i = 0; i < n; i++){
+            if(nodeColor[i] == -1){
+                continue;
+            }
+            for(int j : nodeToMerge){
+                if(neighbours[i].find(j) != neighbours[i].end()){
+                    neighbours[i].erase(j);
+                    neighbours[i].insert(newNodeId);
+                    neighbours[newNodeId].insert(i);
+                }
+            }
+            if(neighbours[i].find(newNodeId) != neighbours[i].end()){
+                neighbours[newNodeId].insert(i);
+            }
+        }
+        for(int j : nodeToMerge){
+            neighbours[j].clear(); // remove node from the graph
+        }
+    }
+
 };
 
 vector<string> splitStr(const string& str, char c){
@@ -69,7 +160,7 @@ void readTestCaseFromFile(const string& fileName, Graph& graph, int& n, int& ste
         getline(file, str);
         vector<string> splits = splitStr(str, ' ');
         for(const string& idStr : splits){
-            graph.neighbours[i].push_back(stoi(idStr));
+            graph.neighbours[i].insert(stoi(idStr));
         }
     }
 }
@@ -83,5 +174,18 @@ int main(){
     Graph graph;
     int n, stepCnt, colorCnt;
     readTestCaseFromFile("./data/sample1.txt", graph, n, stepCnt, colorCnt);
+    cout << "Original Graph:" << endl;
     graph.printGraph();
+    cout << endl << "First Move:" << endl;
+    graph.changeNodeColor(4, 0);
+    graph.printGraph();
+
+    cout << endl << "Second Move:" << endl;
+    graph.changeNodeColor(0, 1);
+    graph.printGraph();
+
+    cout << endl << "Third Move:" << endl;
+    graph.changeNodeColor(0, 2);
+    graph.printGraph();
+    cout << endl;
 }

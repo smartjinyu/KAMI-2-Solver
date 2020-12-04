@@ -72,7 +72,7 @@ public:
         }
         return nodeColor[id];
     }
-    vector<pair<int,int>> getPath(){
+    vector<pair<int,int>> getPath() const{
         return path;
     }
 
@@ -312,5 +312,7 @@ int main(){
     readTestCaseFromFile("./data/sample1.txt", graph, n, stepCnt, colorCnt);
     vector<pair<int, int>> moves = {{4, 0}, {0, 1}, {0, 2}};
     // manualVerify(graph, moves);
-    testGetNextGraphs(graph);
+    // testGetNextGraphs(graph);
+    auto path = solve(graph, stepCnt);
+    manualVerify(graph, path);
 }

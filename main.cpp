@@ -157,6 +157,13 @@ public:
         return ans;
     }
 
+    /*
+        Return the diameter of current graph, which is defined as the longest distance between two nodes
+    */
+    int getDiameter(){
+        // TODO
+        return 0;
+    }
 private:
     int n; // total number of nodes, won't change after creation
     int curNodeCnt; // current number of nodes
@@ -265,6 +272,15 @@ void testGetNextGraphs(Graph graph){
     }
 }
 
+/*
+    Return true if this graph is impossible to get to the end
+    @param limit: total steps allowed (same as the input of solve())
+*/
+bool prune(const Graph& graph, int limit){
+    int leftMoves = limit - graph.getCost();
+    return leftMoves + 1 < graph.getCurColorCnt(); // TODO diameter
+}
+
 vector<pair<int, int>> solve(Graph graph, int limit){
     auto comp = [](const Graph& g1, const Graph& g2){return g1.getCurColorCnt() + g1.getCost() > g2.getCurColorCnt() + g2.getCost();};
     priority_queue<Graph, vector<Graph>, decltype(comp)> pq(comp);
@@ -274,7 +290,17 @@ vector<pair<int, int>> solve(Graph graph, int limit){
     while(!pq.empty()){
         Graph curG = pq.top();
         pq.pop();
-        
+        vector<Graph> nextGraphs = curG.getNextGraphs();
+        for(const Graph& g : nextGraphs){
+            if(g.getCurNodeCnt() == 1){
+                // succeed
+                return g.getPath();
+            }
+            if(!prune(g, limit) /* && seen.find(g) == seen.end()*/){
+                pq.push(g);
+                // seen.insert(g);
+            }
+        }
     }
     return vector<pair<int, int>>();
 }

@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <queue>
 #include <algorithm>
+#include <unordered_map>
 using namespace std;
 
 vector<string> splitStr(const string& str, char c){
@@ -239,7 +240,14 @@ private:
     }
 
     void updateMaxSameNeighbour(){
-        // TODO
+        maxSameNeighbour = 0;
+        for(int i = 0; i < n; i++){
+            unordered_map<int, int> neighbourColorCnt;
+            for(int j : neighbours[i]){
+                neighbourColorCnt[nodeColor[j]]++;
+                maxSameNeighbour = max(maxSameNeighbour, neighbourColorCnt[nodeColor[j]]);
+            }
+        }
     }
 
     /*

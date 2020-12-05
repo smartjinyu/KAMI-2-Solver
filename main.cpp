@@ -22,12 +22,12 @@ vector<string> splitStr(const string& str, char c){
 class Graph{
 public:
 
-    Graph(): n(0), curNodeCnt(0), cost(0), curColorCnt(0){}
+    Graph(): n(0), curNodeCnt(0), cost(0), curColorCnt(0), hashVal(0), diameter(0), maxSameNeighbour(0){}
 
-    Graph(int n): n(n), curNodeCnt(n), cost(0), curColorCnt(0){
-        nodeColor = vector<int>(n, -1);
-        neighbours = vector<unordered_set<int>>(n);
-    }
+    // Graph(int n): n(0), curNodeCnt(0), cost(0), curColorCnt(0), hashVal(0), diameter(0), maxSameNeighbour(0){
+    //     nodeColor = vector<int>(n, -1);
+    //     neighbours = vector<unordered_set<int>>(n);
+    // }
 
     Graph(const string& fileName): cost(0){
         ifstream file(fileName);
@@ -51,7 +51,7 @@ public:
                 neighbours[i].insert(stoi(idStr));
             }
         }
-        updateColorNum();
+        updateGraphConstant();
     }
 
     // getters
@@ -73,6 +73,15 @@ public:
         }
         return nodeColor[id];
     }
+    size_t getHashVal() const{
+        return hashVal;
+    }
+    int getDiameter() const{
+        return diameter;
+    }
+    int getMaxSameNeighbour() const{
+        return maxSameNeighbour;
+    }
     vector<pair<int,int>> getPath() const{
         return path;
     }
@@ -87,28 +96,6 @@ public:
         return nodeColor == graph.nodeColor && neighbours == graph.neighbours;
     }
 
-    /*
-        Return the hash value calculated by converting graph to string and return hash value of the string
-    */
-    size_t getStrHash() const{
-        string res = "[";
-        for(int i : nodeColor){
-            res += to_string(i);
-            res.push_back(',');
-        }
-        res += "];[";
-        for(int i = 0; i < neighbours.size(); i++){
-            vector<int> nums(neighbours[i].begin(), neighbours[i].end());
-            sort(nums.begin(), nums.end());
-            res.push_back('(');
-            for(int num : nums){
-                res += to_string(num);
-            }
-            res.push_back(')');
-        }
-        res.push_back(']');
-        return hash<string>{}(res);
-    }
 
     void printGraph() const{
         // cout << "Graph:" << endl;
@@ -169,7 +156,7 @@ public:
         cost++;
         path.emplace_back(nodeId, newColor);
         contract(nodeId);
-        updateColorNum();
+        updateGraphConstant();
     }
 
     /*
@@ -191,27 +178,70 @@ public:
         return ans;
     }
 
-    /*
-        Return the diameter of current graph, which is defined as the longest distance between two nodes
-    */
-    int getDiameter(){
-        // TODO
-        return 0;
-    }
 private:
     int n; // total number of nodes, won't change after creation
     int curNodeCnt; // current number of nodes
     int cost;
     int curColorCnt; // remaining colors
+    size_t hashVal; // hashValue of current graph
+    int diameter; // defined as the longest distance(length of shortest path) between two nodes
+    int maxSameNeighbour; // max number of neighbours with the same color
     vector<int> nodeColor; // -1 means this node is already contracted with others
     vector<unordered_set<int>> neighbours; // adjacency list
     vector<pair<int, int>> path;
 
-    void updateColorNum(){
+    /*
+        Update the attributes of this graph, only need to be called after the graph is changed (in constructor() and changeNodeColor())
+        Then we can return these attributes in O(1) time when queried
+    */
+    void updateGraphConstant(){
+        updatecurNodeCnt();
+        updateHashVal();
+        updateDiameter();
+        updateMaxSameNeighbour();
+    }
+
+    void updatecurNodeCnt(){
         unordered_set<int> seen(nodeColor.begin(), nodeColor.end());
         seen.erase(-1);
         curColorCnt = seen.size();
     }
+
+    /*
+        Return the hash value calculated by converting graph to string and return hash value of the string
+    */
+    size_t getStrHash() const{
+        string res = "[";
+        for(int i : nodeColor){
+            res += to_string(i);
+            res.push_back(',');
+        }
+        res += "];[";
+        for(int i = 0; i < neighbours.size(); i++){
+            vector<int> nums(neighbours[i].begin(), neighbours[i].end());
+            sort(nums.begin(), nums.end());
+            res.push_back('(');
+            for(int num : nums){
+                res += to_string(num);
+            }
+            res.push_back(')');
+        }
+        res.push_back(']');
+        return hash<string>{}(res);
+    }
+
+    void updateHashVal(){
+        hashVal = getStrHash(); // may change to other hash implementation
+    }
+
+    void updateDiameter(){
+        // TODO, Floyd-Warshall?
+    }
+
+    void updateMaxSameNeighbour(){
+        // TODO
+    }
+    
     /*
         Contract this node with its neighbours with the same color
         The id of the merged node is the min id of these merged nodes
@@ -264,7 +294,7 @@ private:
 
 struct GraphHashStr{
     size_t operator()(const Graph& g) const{
-        return g.getStrHash();
+        return g.getHashVal();
     }
 };
 
@@ -321,8 +351,11 @@ bool prune(const Graph& graph, int limit){
 }
 
 vector<pair<int, int>> solve(Graph graph, int limit){
-    auto comp = [](const Graph& g1, const Graph& g2){return g1.getCurColorCnt() + g1.getCost() > g2.getCurColorCnt() + g2.getCost();};
-    priority_queue<Graph, vector<Graph>, decltype(comp)> pq(comp);
+    // 3 heuristic functions
+    auto comp1 = [](const Graph& g1, const Graph& g2){return g1.getCurColorCnt() + g1.getCost() > g2.getCurColorCnt() + g2.getCost();};
+    auto comp2 = [](const Graph& g1, const Graph& g2){return g1.getCurNodeCnt() + g1.getCost() > g2.getCurNodeCnt() + g2.getCost();};
+    auto comp3 = [](const Graph& g1, const Graph& g2){return g1.getMaxSameNeighbour() < g2.getMaxSameNeighbour();}; // minimum on the top
+    priority_queue<Graph, vector<Graph>, decltype(comp1)> pq(comp1);
     unordered_set<Graph, GraphHashStr> seen;
     pq.push(graph);
     seen.insert(graph);

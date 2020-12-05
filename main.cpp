@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_set>
 #include <queue>
+#include <algorithm>
 using namespace std;
 
 vector<string> splitStr(const string& str, char c){
@@ -74,6 +75,39 @@ public:
     }
     vector<pair<int,int>> getPath() const{
         return path;
+    }
+    vector<int> getNodeColor() const{
+        return nodeColor;
+    }
+    vector<unordered_set<int>> getNeighbours() const{
+        return neighbours;
+    }
+
+    bool operator==(const Graph& graph) const{
+        return nodeColor == graph.nodeColor && neighbours == graph.neighbours;
+    }
+
+    /*
+        Return the hash value calculated by converting graph to string and return hash value of the string
+    */
+    size_t getStrHash() const{
+        string res = "[";
+        for(int i : nodeColor){
+            res += to_string(i);
+            res.push_back(',');
+        }
+        res += "];[";
+        for(int i = 0; i < neighbours.size(); i++){
+            vector<int> nums(neighbours[i].begin(), neighbours[i].end());
+            sort(nums.begin(), nums.end());
+            res.push_back('(');
+            for(int num : nums){
+                res += to_string(num);
+            }
+            res.push_back(')');
+        }
+        res.push_back(']');
+        return hash<string>{}(res);
     }
 
     void printGraph() const{
@@ -228,6 +262,11 @@ private:
 
 };
 
+struct GraphHashStr{
+    size_t operator()(const Graph& g) const{
+        return g.getStrHash();
+    }
+};
 
 
 void readTestCaseFromFile(const string& fileName, Graph& graph, int& n, int& stepCnt, int& colorCnt){
@@ -284,9 +323,9 @@ bool prune(const Graph& graph, int limit){
 vector<pair<int, int>> solve(Graph graph, int limit){
     auto comp = [](const Graph& g1, const Graph& g2){return g1.getCurColorCnt() + g1.getCost() > g2.getCurColorCnt() + g2.getCost();};
     priority_queue<Graph, vector<Graph>, decltype(comp)> pq(comp);
-    // unordered_set<Graph> seen; // TODO, need to override hash and == comparator
+    unordered_set<Graph, GraphHashStr> seen;
     pq.push(graph);
-    // seen.insert(graph);
+    seen.insert(graph);
     while(!pq.empty()){
         Graph curG = pq.top();
         pq.pop();
@@ -296,9 +335,9 @@ vector<pair<int, int>> solve(Graph graph, int limit){
                 // succeed
                 return g.getPath();
             }
-            if(!prune(g, limit) /* && seen.find(g) == seen.end()*/){
+            if(!prune(g, limit) && seen.find(g) == seen.end()){
                 pq.push(g);
-                // seen.insert(g);
+                seen.insert(g);
             }
         }
     }
@@ -309,7 +348,8 @@ int main(){
     cout << "Hello CSE 202" << endl;
     Graph graph;
     int n, stepCnt, colorCnt;
-    readTestCaseFromFile("./data/sample1.txt", graph, n, stepCnt, colorCnt);
+    string fileName = "./data/sample1.txt";// "./data/game5-24-7-4.txt";
+    readTestCaseFromFile(fileName, graph, n, stepCnt, colorCnt);
     vector<pair<int, int>> moves = {{4, 0}, {0, 1}, {0, 2}};
     // manualVerify(graph, moves);
     // testGetNextGraphs(graph);

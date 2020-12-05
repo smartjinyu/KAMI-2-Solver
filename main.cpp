@@ -195,13 +195,13 @@ private:
         Then we can return these attributes in O(1) time when queried
     */
     void updateGraphConstant(){
-        updatecurNodeCnt();
+        updateCurColorCnt();
         updateHashVal();
         updateDiameter();
         updateMaxSameNeighbour();
     }
 
-    void updatecurNodeCnt(){
+    void updateCurColorCnt(){
         unordered_set<int> seen(nodeColor.begin(), nodeColor.end());
         seen.erase(-1);
         curColorCnt = seen.size();
@@ -241,7 +241,7 @@ private:
     void updateMaxSameNeighbour(){
         // TODO
     }
-    
+
     /*
         Contract this node with its neighbours with the same color
         The id of the merged node is the min id of these merged nodes

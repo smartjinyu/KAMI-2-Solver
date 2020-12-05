@@ -6,6 +6,7 @@
 #include <queue>
 #include <algorithm>
 #include <unordered_map>
+#include <climits>
 using namespace std;
 
 vector<string> splitStr(const string& str, char c){
@@ -103,6 +104,8 @@ public:
         // cout << "Total number of nodes: " << n << endl;
         cout << "Current number of nodes: " << curNodeCnt << endl;
         cout << "Current number of colors: " << curColorCnt << endl;
+        cout << "Diameter: " << diameter << endl;
+        cout << "Max same color neighbours: " << maxSameNeighbour << endl;
         cout << "Color of each node: ";
         for(int i = 0; i < n; i++){
             if(nodeColor[i] != -1){
@@ -236,7 +239,46 @@ private:
     }
 
     void updateDiameter(){
-        // TODO, Floyd-Warshall?
+        // Floyd-Warshall, O(n^3)
+        vector<vector<int>> distance(n, vector<int>(n, INT_MAX/2));
+        for(int i = 0; i < n; i++){
+            if(nodeColor[i] == -1){
+                continue;
+            }
+            for(int j : neighbours[i]){
+                distance[i][j] = distance[j][i] = 1;
+            }
+        }
+        for(int k = 0; k < n; k++){
+            if(nodeColor[k] == -1){
+                // skip vertices which are already merged, should not affect correctness
+                continue;
+            }
+            for(int i = 0; i < n; i++){
+                if(nodeColor[i] == -1){
+                    continue;
+                }
+                for(int j = 0; j < n; j++){
+                    if(nodeColor[j] == -1){
+                        continue;
+                    }
+                    if(distance[i][j] - distance[i][k] > distance[k][j]){
+                        distance[i][j] = distance[i][k] + distance[k][j];
+                    }
+                }
+            }
+        }
+        diameter = 0;
+        for(int i = 0; i < n; i++){
+            if(nodeColor[i] == -1){
+                continue;
+            }
+            for(int j = 0; j < n; j++){
+                if(distance[i][j] != INT_MAX/2){
+                    diameter = max(diameter, distance[i][j]);
+                }
+            }
+        }
     }
 
     void updateMaxSameNeighbour(){
@@ -355,7 +397,7 @@ void testGetNextGraphs(Graph graph){
 */
 bool prune(const Graph& graph, int limit){
     int leftMoves = limit - graph.getCost();
-    return leftMoves + 1 < graph.getCurColorCnt(); // TODO diameter
+    return leftMoves + 1 < graph.getCurColorCnt() || leftMoves * 2 < graph.getDiameter();
 }
 
 vector<pair<int, int>> solve(Graph graph, int limit){

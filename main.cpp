@@ -484,23 +484,24 @@ int main(){
     // auto path = solve(graph, stepCnt);
     // manualVerify(graph, path);
     // runSingleTest("./data/game6-20-5-4.txt");
-    vector<string> fileNames = {
-        "./data/sample1.txt",
-        "./data/game1-16-5-4.txt",
-        "./data/game2-18-5-4.txt",
-        "./data/game3-25-5-3.txt",
-        "./data/game4-24-5-3.txt",
-        "./data/game6-20-5-4.txt",
-        "./data/game7-26-5-4.txt",
-        "./data/game8-18-3-3.txt",
-        "./data/game9-15-4-3.txt",
-        "./data/game10-13-4-3.txt",
-        "./data/game11-15-3-4.txt",
-        "./data/game12-16-4-4.txt",
-        "./data/game5-24-7-4.txt"};
-    for(const string& fileName : fileNames){
+    vector<pair<string, int>> fileNames = {
+        {"./data/sample1.txt", 10},
+        {"./data/game1-16-5-4.txt", 10},
+        {"./data/game2-18-5-4.txt", 10},
+        {"./data/game3-25-5-3.txt", 10},
+        {"./data/game4-24-5-3.txt", 10},
+        {"./data/game6-20-5-4.txt", 10},
+        {"./data/game7-26-5-4.txt", 10},
+        {"./data/game8-18-3-3.txt", 10},
+        {"./data/game9-15-4-3.txt", 10},
+        {"./data/game10-13-4-3.txt", 10},
+        {"./data/game11-15-3-4.txt", 10},
+        {"./data/game12-16-4-4.txt", 10},
+        {"./data/game5-24-7-4.txt", 1}
+    };
+    for(const auto& p : fileNames){
         // cout << fileName << endl;
-        runSingleTest(fileName, 1);
+        runSingleTest(p.first, p.second);
     }
     return 0;
 }

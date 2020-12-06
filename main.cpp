@@ -442,19 +442,32 @@ vector<pair<int, int>> solve(Graph graph, int limit){
 /*
     Run a single test, calculate time usage and number of graphs evaluated
 */
-void runSingleTest(const string& fileName){
+void runSingleTest(const string& fileName, int K){
+    if(K <= 0){
+        return;
+    }
     Graph graph;
     int n, stepCnt, colorCnt, numGraphsTried = 0;
     readTestCaseFromFile(fileName, graph, n, stepCnt, colorCnt);
-
-    auto t1 = std::chrono::high_resolution_clock::now();
-    auto moves = solve(graph, stepCnt, numGraphsTried);
-    auto t2 = std::chrono::high_resolution_clock::now();
-    long duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
+    long totalDuration = 0;
+    vector<pair<int, int>> moves;
+    for(int k = 0; k < K; k++){
+        auto t1 = std::chrono::high_resolution_clock::now();
+        moves = solve(graph, stepCnt, numGraphsTried);
+        auto t2 = std::chrono::high_resolution_clock::now();
+        long duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
+        totalDuration += duration;
+    }
+    totalDuration /= K;
     if(!moves.empty()){
-        cout << "Successfully solved " << fileName << ", time usage = " << duration << " ms, numGraphsTried = " << numGraphsTried << endl;
+        cout << "Successfully solved " << fileName << ", time usage = " << totalDuration << " ms, numGraphsTried = " << numGraphsTried << endl;
+        cout << "Moves: ";
+        for(const auto& move : moves){
+            cout << "(" << move.first << ", " << move.second << "); ";
+        }
+        cout << endl;
     }else{
-        cout << "Failed to solve " << fileName << ", time usage = " << duration << " ms, numGraphsTried = " << numGraphsTried << endl;
+        cout << "Failed to solve " << fileName << ", time usage = " << totalDuration << " ms, numGraphsTried = " << numGraphsTried << endl;
     }
     // manualVerify(graph, moves); // use this function to print the graph change of each step
 }
@@ -463,12 +476,31 @@ int main(){
     // cout << "Hello CSE 202" << endl;
     // Graph graph;
     // int n, stepCnt, colorCnt;
-    // string fileName = "./data/sample1.txt";// "./data/game5-24-7-4.txt";
+    // string fileName = "./data/game1-16-5-4.txt";// "./data/game5-24-7-4.txt";
     // readTestCaseFromFile(fileName, graph, n, stepCnt, colorCnt);
-    // vector<pair<int, int>> moves = {{4, 0}, {0, 1}, {0, 2}};
+    // vector<pair<int, int>> moves = {{14, 1}, {8, 3}, {5, 0}, {3, 0}, {0, 2}};
     // manualVerify(graph, moves);
     // testGetNextGraphs(graph);
     // auto path = solve(graph, stepCnt);
     // manualVerify(graph, path);
-    runSingleTest("./data/game6-20-5-4.txt");
+    // runSingleTest("./data/game6-20-5-4.txt");
+    vector<string> fileNames = {
+        "./data/sample1.txt",
+        "./data/game1-16-5-4.txt",
+        "./data/game2-18-5-4.txt",
+        "./data/game3-25-5-3.txt",
+        "./data/game4-24-5-3.txt",
+        "./data/game6-20-5-4.txt",
+        "./data/game7-26-5-4.txt",
+        "./data/game8-18-3-3.txt",
+        "./data/game9-15-4-3.txt",
+        "./data/game10-13-4-3.txt",
+        "./data/game11-15-3-4.txt",
+        "./data/game12-16-4-4.txt",
+        "./data/game5-24-7-4.txt"};
+    for(const string& fileName : fileNames){
+        // cout << fileName << endl;
+        runSingleTest(fileName, 1);
+    }
+    return 0;
 }

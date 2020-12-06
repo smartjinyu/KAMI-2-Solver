@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <climits>
+#include <chrono>
 using namespace std;
 
 vector<string> splitStr(const string& str, char c){
@@ -400,7 +401,11 @@ bool prune(const Graph& graph, int limit){
     return leftMoves + 1 < graph.getCurColorCnt() || leftMoves * 2 < graph.getDiameter();
 }
 
-vector<pair<int, int>> solve(Graph graph, int limit){
+/*
+    Main solver function, input a graph and step limit, return the steps to solve the problem
+    numGraphsTried is the number of graphs we have tried in the BFS process
+*/
+vector<pair<int, int>> solve(Graph graph, int limit, int& numGraphsTried){
     // 3 heuristic functions
     auto comp1 = [](const Graph& g1, const Graph& g2){return g1.getCurColorCnt() + g1.getCost() > g2.getCurColorCnt() + g2.getCost();};
     auto comp2 = [](const Graph& g1, const Graph& g2){return g1.getCurNodeCnt() + g1.getCost() > g2.getCurNodeCnt() + g2.getCost();};
@@ -409,9 +414,11 @@ vector<pair<int, int>> solve(Graph graph, int limit){
     unordered_set<Graph, GraphHashStr> seen;
     pq.push(graph);
     seen.insert(graph);
+    numGraphsTried = 0;
     while(!pq.empty()){
         Graph curG = pq.top();
         pq.pop();
+        numGraphsTried++;
         vector<Graph> nextGraphs = curG.getNextGraphs();
         for(const Graph& g : nextGraphs){
             if(g.getCurNodeCnt() == 1){
@@ -427,15 +434,41 @@ vector<pair<int, int>> solve(Graph graph, int limit){
     return vector<pair<int, int>>();
 }
 
-int main(){
-    cout << "Hello CSE 202" << endl;
+vector<pair<int, int>> solve(Graph graph, int limit){
+    int numGraphsTried = 0;
+    return solve(graph, limit);
+}
+
+/*
+    Run a single test, calculate time usage and number of graphs evaluated
+*/
+void runSingleTest(const string& fileName){
     Graph graph;
-    int n, stepCnt, colorCnt;
-    string fileName = "./data/sample1.txt";// "./data/game5-24-7-4.txt";
+    int n, stepCnt, colorCnt, numGraphsTried = 0;
     readTestCaseFromFile(fileName, graph, n, stepCnt, colorCnt);
-    vector<pair<int, int>> moves = {{4, 0}, {0, 1}, {0, 2}};
+
+    auto t1 = std::chrono::high_resolution_clock::now();
+    auto moves = solve(graph, stepCnt, numGraphsTried);
+    auto t2 = std::chrono::high_resolution_clock::now();
+    long duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
+    if(!moves.empty()){
+        cout << "Successfully solved " << fileName << ", time usage = " << duration << " ms, numGraphsTried = " << numGraphsTried << endl;
+    }else{
+        cout << "Failed to solve " << fileName << ", time usage = " << duration << " ms, numGraphsTried = " << numGraphsTried << endl;
+    }
+    // manualVerify(graph, moves); // use this function to print the graph change of each step
+}
+
+int main(){
+    // cout << "Hello CSE 202" << endl;
+    // Graph graph;
+    // int n, stepCnt, colorCnt;
+    // string fileName = "./data/sample1.txt";// "./data/game5-24-7-4.txt";
+    // readTestCaseFromFile(fileName, graph, n, stepCnt, colorCnt);
+    // vector<pair<int, int>> moves = {{4, 0}, {0, 1}, {0, 2}};
     // manualVerify(graph, moves);
     // testGetNextGraphs(graph);
-    auto path = solve(graph, stepCnt);
-    manualVerify(graph, path);
+    // auto path = solve(graph, stepCnt);
+    // manualVerify(graph, path);
+    runSingleTest("./data/game6-20-5-4.txt");
 }

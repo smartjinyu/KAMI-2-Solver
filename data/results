@@ -1,0 +1,121 @@
+Heuristic 1:
+Successfully solved ./data/sample1.txt, time usage = 27 ms, numGraphsTried = 20
+Moves: (4, 0); (0, 1); (0, 2);
+Successfully solved ./data/game1-16-5-4.txt, time usage = 378 ms, numGraphsTried = 93
+Moves: (14, 1); (8, 3); (5, 0); (3, 0); (0, 2);
+Successfully solved ./data/game2-18-5-4.txt, time usage = 542 ms, numGraphsTried = 78
+Moves: (11, 0); (10, 1); (6, 2); (3, 3); (2, 0);
+Successfully solved ./data/game3-25-5-3.txt, time usage = 4973 ms, numGraphsTried = 650
+Moves: (22, 0); (17, 2); (5, 0); (0, 2); (0, 1);
+Successfully solved ./data/game4-24-5-3.txt, time usage = 5598 ms, numGraphsTried = 764
+Moves: (11, 2); (4, 0); (4, 1); (3, 2); (0, 1);
+Successfully solved ./data/game6-20-5-4.txt, time usage = 472 ms, numGraphsTried = 79
+Moves: (7, 2); (4, 0); (2, 3); (0, 2); (0, 1);
+Successfully solved ./data/game7-26-5-4.txt, time usage = 20393 ms, numGraphsTried = 1087
+Moves: (22, 3); (13, 3); (3, 2); (0, 0); (0, 1);
+Successfully solved ./data/game8-18-3-3.txt, time usage = 39 ms, numGraphsTried = 11
+Moves: (11, 2); (8, 0); (2, 1);
+Successfully solved ./data/game9-15-4-3.txt, time usage = 160 ms, numGraphsTried = 86
+Moves: (11, 0); (0, 1); (0, 2); (0, 0);
+Successfully solved ./data/game10-13-4-3.txt, time usage = 35 ms, numGraphsTried = 30
+Moves: (8, 0); (5, 1); (7, 1); (2, 2);
+Successfully solved ./data/game11-15-3-4.txt, time usage = 8 ms, numGraphsTried = 5
+Moves: (3, 3); (2, 0); (0, 1);
+Successfully solved ./data/game12-16-4-4.txt, time usage = 60 ms, numGraphsTried = 16
+Moves: (0, 2); (0, 3); (0, 1); (0, 0);
+Successfully solved ./data/game5-24-7-4.txt, time usage = 257577 ms, numGraphsTried = 28402
+Moves: (0, 1); (1, 3); (0, 3); (0, 0); (1, 0); (6, 0); (0, 1);
+Successfully solved ./data/game13-52-14-5.txt, time usage = 31357341 ms, numGraphsTried = 323123
+Moves: (9, 1); (9, 0); (9, 4); (9, 0); (9, 3); (9, 0); (9, 1); (9, 0); (9, 2); (6, 4); (1, 3); (1, 0); (1, 1); (0, 2);
+
+
+Heuristic 2:
+Successfully solved ./data/sample1.txt, time usage = 3 ms, numGraphsTried = 3
+Moves: (4, 0); (0, 1); (0, 2);
+Successfully solved ./data/game1-16-5-4.txt, time usage = 16 ms, numGraphsTried = 5
+Moves: (1, 2); (1, 1); (14, 1); (1, 0); (0, 3);
+Successfully solved ./data/game2-18-5-4.txt, time usage = 356 ms, numGraphsTried = 79
+Moves: (8, 3); (2, 1); (2, 0); (0, 2); (0, 3);
+Successfully solved ./data/game3-25-5-3.txt, time usage = 28 ms, numGraphsTried = 5
+Moves: (5, 1); (1, 2); (1, 0); (0, 1); (0, 2);
+Successfully solved ./data/game4-24-5-3.txt, time usage = 315 ms, numGraphsTried = 57
+Moves: (18, 2); (12, 0); (11, 1); (3, 2); (0, 1);
+Successfully solved ./data/game6-20-5-4.txt, time usage = 22 ms, numGraphsTried = 7
+Moves: (7, 0); (11, 0); (2, 3); (0, 2); (0, 1);
+Successfully solved ./data/game7-26-5-4.txt, time usage = 3450 ms, numGraphsTried = 256
+Moves: (22, 3); (6, 0); (6, 2); (0, 1); (0, 3);
+Successfully solved ./data/game8-18-3-3.txt, time usage = 23 ms, numGraphsTried = 7
+Moves: (11, 2); (8, 0); (2, 1);
+Successfully solved ./data/game9-15-4-3.txt, time usage = 7 ms, numGraphsTried = 4
+Moves: (13, 0); (0, 1); (0, 2); (0, 0);
+Successfully solved ./data/game10-13-4-3.txt, time usage = 3 ms, numGraphsTried = 4
+Moves: (5, 1); (8, 0); (7, 1); (2, 2);
+Successfully solved ./data/game11-15-3-4.txt, time usage = 4 ms, numGraphsTried = 3
+Moves: (3, 3); (2, 1); (1, 0);
+Successfully solved ./data/game12-16-4-4.txt, time usage = 11 ms, numGraphsTried = 4
+Moves: (3, 3); (13, 3); (0, 1); (0, 0);
+Successfully solved ./data/game5-24-7-4.txt, time usage = 38 ms, numGraphsTried = 7
+Moves: (0, 1); (0, 3); (0, 0); (0, 1); (0, 0); (0, 3); (0, 2);
+Successfully solved ./data/game13-52-14-5.txt, time usage = 836 ms, numGraphsTried = 16
+Moves: (9, 1); (9, 0); (9, 4); (9, 2); (6, 0); (6, 3); (6, 0); (6, 1); (0, 0); (0, 4); (0, 0); (0, 1); (0, 2); (0, 3);
+
+
+Heuristic 3:
+Successfully solved ./data/sample1.txt, time usage = 33 ms, numGraphsTried = 23
+Moves: (4, 0); (0, 1); (0, 2);
+Successfully solved ./data/game1-16-5-4.txt, time usage = 214 ms, numGraphsTried = 60
+Moves: (8, 2); (1, 2); (1, 1); (1, 3); (1, 0);
+Successfully solved ./data/game2-18-5-4.txt, time usage = 28 ms, numGraphsTried = 7
+Moves: (8, 3); (2, 1); (2, 2); (2, 3); (2, 0);
+Successfully solved ./data/game3-25-5-3.txt, time usage = 166 ms, numGraphsTried = 38
+Moves: (4, 2); (19, 2); (2, 0); (0, 2); (0, 1);
+Successfully solved ./data/game4-24-5-3.txt, time usage = 5385 ms, numGraphsTried = 705
+Moves: (12, 0); (17, 0); (11, 1); (3, 2); (0, 1);
+Successfully solved ./data/game6-20-5-4.txt, time usage = 124 ms, numGraphsTried = 38
+Moves: (11, 1); (7, 0); (2, 3); (0, 1); (0, 2);
+Successfully solved ./data/game7-26-5-4.txt, time usage = 357 ms, numGraphsTried = 22
+Moves: (22, 3); (6, 0); (3, 1); (6, 1); (2, 2);
+Successfully solved ./data/game8-18-3-3.txt, time usage = 9 ms, numGraphsTried = 3
+Moves: (11, 2); (8, 0); (2, 1);
+Successfully solved ./data/game9-15-4-3.txt, time usage = 85 ms, numGraphsTried = 53
+Moves: (5, 0); (5, 1); (5, 2); (2, 0);
+Successfully solved ./data/game10-13-4-3.txt, time usage = 67 ms, numGraphsTried = 57
+Moves: (8, 0); (7, 1); (5, 1); (2, 2);
+Successfully solved ./data/game11-15-3-4.txt, time usage = 10 ms, numGraphsTried = 5
+Moves: (3, 3); (2, 0); (0, 1);
+Successfully solved ./data/game12-16-4-4.txt, time usage = 27 ms, numGraphsTried = 10
+Moves: (14, 2); (3, 3); (0, 0); (0, 1);
+Successfully solved ./data/game5-24-7-4.txt, time usage = 875428 ms, numGraphsTried = 106760
+Moves: (0, 1); (0, 3); (1, 3); (1, 0); (1, 1); (0, 0); (0, 1);
+Successfully solved ./data/game13-52-14-5.txt, time usage = 3668635 ms, numGraphsTried = 62189
+Moves: (9, 1); (9, 0); (9, 4); (9, 0); (9, 3); (9, 0); (9, 1); (9, 2); (6, 0); (6, 4); (1, 0); (1, 3); (1, 1); (0, 2);
+
+Naive BFS:
+Successfully solved ./data/sample1.txt, time usage = 35 ms, numGraphsTried = 23
+Moves: (4, 0); (0, 1); (0, 2);
+Successfully solved ./data/game1-16-5-4.txt, time usage = 2702 ms, numGraphsTried = 722
+Moves: (1, 2); (1, 1); (14, 1); (1, 0); (0, 3);
+Successfully solved ./data/game2-18-5-4.txt, time usage = 5880 ms, numGraphsTried = 1016
+Moves: (8, 3); (2, 1); (2, 2); (2, 0); (0, 3);
+Successfully solved ./data/game3-25-5-3.txt, time usage = 29009 ms, numGraphsTried = 5138
+Moves: (0, 2); (17, 2); (0, 0); (0, 2); (0, 1);
+Successfully solved ./data/game4-24-5-3.txt, time usage = 6150 ms, numGraphsTried = 772
+Moves: (10, 0); (12, 0); (10, 1); (3, 2); (0, 1);
+Successfully solved ./data/game6-20-5-4.txt, time usage = 4249 ms, numGraphsTried = 821
+Moves: (7, 0); (11, 0); (2, 1); (2, 3); (0, 2);
+Successfully solved ./data/game7-26-5-4.txt, time usage = 38515 ms, numGraphsTried = 1920
+Moves: (3, 1); (22, 3); (6, 0); (6, 1); (2, 2);
+Successfully solved ./data/game8-18-3-3.txt, time usage = 46 ms, numGraphsTried = 14
+Moves: (11, 2); (8, 0); (2, 1);
+Successfully solved ./data/game9-15-4-3.txt, time usage = 465 ms, numGraphsTried = 299
+Moves: (5, 0); (5, 1); (5, 2); (2, 0);
+Successfully solved ./data/game10-13-4-3.txt, time usage = 59 ms, numGraphsTried = 58
+Moves: (5, 1); (8, 0); (7, 1); (2, 2);
+Successfully solved ./data/game11-15-3-4.txt, time usage = 9 ms, numGraphsTried = 5
+Moves: (3, 3); (2, 0); (0, 1);
+Successfully solved ./data/game12-16-4-4.txt, time usage = 203 ms, numGraphsTried = 60
+Moves: (0, 2); (0, 3); (0, 0); (0, 1);
+Successfully solved ./data/game5-24-7-4.txt, time usage = 1040732 ms, numGraphsTried = 130868
+Moves: (0, 1); (0, 3); (0, 0); (0, 1); (0, 0); (0, 3); (0, 2);
+Successfully solved ./data/game13-52-14-5.txt, time usage = 31909365 ms, numGraphsTried = 327884
+Moves: (9, 1); (9, 0); (9, 4); (9, 0); (9, 3); (9, 0); (9, 1); (9, 0); (9, 2); (6, 3); (2, 4); (1, 0); (1, 1); (0, 2);

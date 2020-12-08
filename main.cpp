@@ -410,7 +410,7 @@ vector<pair<int, int>> solve(Graph graph, int limit, int& numGraphsTried){
     auto comp1 = [](const Graph& g1, const Graph& g2){return g1.getCurColorCnt() + g1.getCost() > g2.getCurColorCnt() + g2.getCost();};
     auto comp2 = [](const Graph& g1, const Graph& g2){return g1.getCurNodeCnt() + g1.getCost() > g2.getCurNodeCnt() + g2.getCost();};
     auto comp3 = [](const Graph& g1, const Graph& g2){return g1.getMaxSameNeighbour() < g2.getMaxSameNeighbour();}; // minimum on the top
-    priority_queue<Graph, vector<Graph>, decltype(comp1)> pq(comp1);
+    priority_queue<Graph, vector<Graph>, decltype(comp2)> pq(comp2);
     unordered_set<Graph, GraphHashStr> seen;
     pq.push(graph);
     seen.insert(graph);
@@ -419,6 +419,9 @@ vector<pair<int, int>> solve(Graph graph, int limit, int& numGraphsTried){
         Graph curG = pq.top();
         pq.pop();
         numGraphsTried++;
+        if(numGraphsTried % 10000 == 0){
+            cout << "numGraphsTried = " << numGraphsTried << ", pq.size() = " << pq.size() << ", cur graph nodes = " << curG.getCurNodeCnt() << ", colors = " << curG.getCurColorCnt() << endl;
+        }
         vector<Graph> nextGraphs = curG.getNextGraphs();
         for(const Graph& g : nextGraphs){
             if(g.getCurNodeCnt() == 1){
@@ -485,19 +488,19 @@ int main(){
     // manualVerify(graph, path);
     // runSingleTest("./data/game6-20-5-4.txt");
     vector<pair<string, int>> fileNames = {
-        // {"./data/sample1.txt", 10},
-        // {"./data/game1-16-5-4.txt", 10},
-        // {"./data/game2-18-5-4.txt", 10},
-        // {"./data/game3-25-5-3.txt", 10},
-        // {"./data/game4-24-5-3.txt", 10},
-        // {"./data/game6-20-5-4.txt", 10},
-        // {"./data/game7-26-5-4.txt", 10},
-        // {"./data/game8-18-3-3.txt", 10},
-        // {"./data/game9-15-4-3.txt", 10},
-        // {"./data/game10-13-4-3.txt", 10},
-        // {"./data/game11-15-3-4.txt", 10},
-        // {"./data/game12-16-4-4.txt", 10},
-        // {"./data/game5-24-7-4.txt", 1},
+        {"./data/sample1.txt", 10},
+        {"./data/game1-16-5-4.txt", 10},
+        {"./data/game2-18-5-4.txt", 10},
+        {"./data/game3-25-5-3.txt", 10},
+        {"./data/game4-24-5-3.txt", 10},
+        {"./data/game6-20-5-4.txt", 10},
+        {"./data/game7-26-5-4.txt", 10},
+        {"./data/game8-18-3-3.txt", 10},
+        {"./data/game9-15-4-3.txt", 10},
+        {"./data/game10-13-4-3.txt", 10},
+        {"./data/game11-15-3-4.txt", 10},
+        {"./data/game12-16-4-4.txt", 10},
+        {"./data/game5-24-7-4.txt", 1},
         {"./data/game13-52-14-5.txt", 1}
     };
     for(const auto& p : fileNames){
